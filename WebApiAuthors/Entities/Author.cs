@@ -9,7 +9,7 @@ public class Author
     public int Id { get; set; }
 
     [Required(ErrorMessage = "El campo {0} es requerido")]
-    [StringLength(maximumLength: 10, ErrorMessage = "El campo {0} no debe tener más de {1} carácteres")]
+    [StringLength(10, ErrorMessage = "El campo {0} no debe tener más de {1} carácteres")]
     [FirstCapitalLetter]
     public string Name { get; set; }
 

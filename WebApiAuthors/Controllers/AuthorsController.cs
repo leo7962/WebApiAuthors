@@ -35,10 +35,7 @@ public class AuthorsController : ControllerBase
     public async Task<ActionResult<Author>> Get([FromRoute] int id)
     {
         var author = await _context.Authors.Include(x => x.Books).FirstOrDefaultAsync(x => x.Id == id);
-        if (author == null)
-        {
-            return NotFound();
-        }
+        if (author == null) return NotFound();
 
         return author;
     }
@@ -47,10 +44,7 @@ public class AuthorsController : ControllerBase
     public async Task<ActionResult<Author>> Get([FromRoute] string name)
     {
         var author = await _context.Authors.Include(x => x.Books).FirstOrDefaultAsync(x => x.Name.Contains(name));
-        if (author == null)
-        {
-            return NotFound();
-        }
+        if (author == null) return NotFound();
 
         return Ok(author);
     }
@@ -66,16 +60,10 @@ public class AuthorsController : ControllerBase
     [HttpPut("{id:int}")] //Api/autores/id = 1 o 2
     public async Task<IActionResult> Put(Author author, int id)
     {
-        if (author.Id != id)
-        {
-            return BadRequest("El id del autor no coincide con el id de la URL");
-        }
+        if (author.Id != id) return BadRequest("El id del autor no coincide con el id de la URL");
 
         var exists = await _context.Authors.AnyAsync(x => x.Id == id);
-        if (!exists)
-        {
-            return NotFound();
-        }
+        if (!exists) return NotFound();
 
         _context.Update(author);
         await _context.SaveChangesAsync();
@@ -86,10 +74,7 @@ public class AuthorsController : ControllerBase
     public async Task<IActionResult> Delete(int id)
     {
         var exists = await _context.Authors.AnyAsync(x => x.Id == id);
-        if (!exists)
-        {
-            return NotFound();
-        }
+        if (!exists) return NotFound();
 
         _context.Remove(new Author {Id = id});
         await _context.SaveChangesAsync();
