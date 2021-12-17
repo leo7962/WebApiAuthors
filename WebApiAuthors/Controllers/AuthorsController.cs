@@ -52,6 +52,10 @@ public class AuthorsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] Author author)
     {
+        //Validaciones en el controlador
+        var existsUser = await _context.Authors.AnyAsync(x => x.Name == author.Name);
+        if (existsUser) return BadRequest($"Ya existe un autor con el nombre {author.Name}");
+
         _context.Add(author);
         await _context.SaveChangesAsync();
         return Ok();
