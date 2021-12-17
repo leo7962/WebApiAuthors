@@ -80,7 +80,7 @@ public class AuthorsController : ControllerBase
         var exists = await _context.Authors.AnyAsync(x => x.Id == id);
         if (!exists) return NotFound();
 
-        _context.Remove(new Author {Id = id});
+        _context.Remove(new Author { Id = id });
         await _context.SaveChangesAsync();
         return Ok();
     }

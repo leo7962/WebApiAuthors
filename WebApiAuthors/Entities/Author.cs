@@ -1,6 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using WebApiAuthors.Validations;
 
 namespace WebApiAuthors.Entities;
 
@@ -29,7 +27,7 @@ public class Author : IValidatableObject
             var firstLetter = Name[0].ToString();
 
             if (firstLetter != firstLetter.ToUpper())
-                yield return new ValidationResult("la primera letra debe ser mayúscula", new[] {nameof(Name)});
+                yield return new ValidationResult("la primera letra debe ser mayúscula", new[] { nameof(Name) });
         }
 
         /*if (less > big)
