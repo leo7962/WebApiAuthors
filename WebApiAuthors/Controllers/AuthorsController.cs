@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using WebApiAuthors.Context;
 using WebApiAuthors.Entities;
+using WebApiAuthors.Services;
 
 namespace WebApiAuthors.Controllers;
 
@@ -10,10 +11,37 @@ namespace WebApiAuthors.Controllers;
 public class AuthorsController : ControllerBase
 {
     private readonly DataContext _context;
+    private readonly ILogger<AuthorsController> _logger;
+    private readonly IService _service;
+    private readonly ServiceScoped _serviceScoped;
+    private readonly ServiceSingleton _serviceSingleton;
+    private readonly ServiceTransient _serviceTransient;
 
-    public AuthorsController(DataContext context)
+    public AuthorsController(DataContext context, IService service, ServiceTransient serviceTransient,
+        ServiceScoped serviceScoped, ServiceSingleton serviceSingleton, ILogger<AuthorsController> logger)
     {
         _context = context;
+        _service = service;
+        _serviceTransient = serviceTransient;
+        _serviceScoped = serviceScoped;
+        _serviceSingleton = serviceSingleton;
+        _logger = logger;
+    }
+
+    [HttpGet("GUID")]
+    public ActionResult ObtenerGuids()
+    {
+        return Ok(
+            new
+            {
+                AuthorsControllerTransient = _serviceTransient.Guid,
+                ServiceA_Transient = _service.GetTransient(),
+                AuthorsControllerScoped = _serviceScoped.Guid,
+                ServiceA_Scoped = _service.GetScoped(),
+                AuthorsControllerSingleton = _serviceSingleton.Guid,
+                ServiceA_Singleton = _service.GetSingleton()
+            }
+        );
     }
 
     [HttpGet] //api/autores
@@ -21,6 +49,8 @@ public class AuthorsController : ControllerBase
     [HttpGet("/listado")] //listado
     public async Task<ActionResult<List<Author>>> Get()
     {
+        _logger.LogInformation("Estamos obteniendo una lista de autores");
+        _logger.LogWarning("Este es un mensaje de prueba");
         return await _context.Authors.Include(x => x.Books).ToListAsync();
     }
 
@@ -80,7 +110,7 @@ public class AuthorsController : ControllerBase
         var exists = await _context.Authors.AnyAsync(x => x.Id == id);
         if (!exists) return NotFound();
 
-        _context.Remove(new Author { Id = id });
+        _context.Remove(new Author {Id = id});
         await _context.SaveChangesAsync();
         return Ok();
     }
