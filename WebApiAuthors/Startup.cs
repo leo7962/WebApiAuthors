@@ -1,6 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using WebApiAuthors.Context;
+using WebApiAuthors.Filters;
+using WebApiAuthors.Middlewares;
 using WebApiAuthors.Services;
 
 namespace WebApiAuthors;
@@ -17,7 +20,7 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         // Add services to the container.
-        services.AddControllers()
+        services.AddControllers(options => { options.Filters.Add(typeof(MyExceptionFilter)); })
             .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
         services.AddDbContext<DataContext>(options =>
             options.UseSqlServer(_configuration.GetConnectionString("DefaultConnection")));
@@ -36,17 +39,33 @@ public class Startup
         services.AddTransient<ServiceTransient>();
         services.AddScoped<ServiceScoped>();
         services.AddSingleton<ServiceSingleton>();
+        services.AddTransient<MyFilterAction>();
+        services.AddHostedService<WriteFile>();
+
+        services.AddResponseCaching();
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
     }
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
     {
         // Configure the HTTP request pipeline.
+
+        app.UseResponseLogging();
+
+        app.Map("/ruta1",
+            builder =>
+            {
+                builder.Run(
+                    async context => { await context.Response.WriteAsync("Estoy interceptando el middleware"); });
+            });
+
         if (env.IsDevelopment())
         {
+            app.UseDeveloperExceptionPage();
             app.UseSwagger();
             app.UseSwaggerUI();
         }
@@ -54,6 +73,8 @@ public class Startup
         app.UseHttpsRedirection();
 
         app.UseRouting();
+
+        app.UseResponseCaching();
 
         app.UseAuthorization();
 

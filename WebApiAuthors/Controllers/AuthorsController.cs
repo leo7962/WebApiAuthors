@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApiAuthors.Context;
 using WebApiAuthors.Entities;
+using WebApiAuthors.Filters;
 using WebApiAuthors.Services;
 
 namespace WebApiAuthors.Controllers;
@@ -29,6 +31,8 @@ public class AuthorsController : ControllerBase
     }
 
     [HttpGet("GUID")]
+    [ResponseCache(Duration = 10)]
+    [ServiceFilter(typeof(MyFilterAction))]
     public ActionResult ObtenerGuids()
     {
         return Ok(
@@ -47,8 +51,12 @@ public class AuthorsController : ControllerBase
     [HttpGet] //api/autores
     [HttpGet("listado")] //api/autores/listado
     [HttpGet("/listado")] //listado
+    //[ResponseCache(Duration = 10)]
+    //[Authorize]
+    [ServiceFilter(typeof(MyFilterAction))]
     public async Task<ActionResult<List<Author>>> Get()
     {
+        //throw new NotImplementedException();
         _logger.LogInformation("Estamos obteniendo una lista de autores");
         _logger.LogWarning("Este es un mensaje de prueba");
         return await _context.Authors.Include(x => x.Books).ToListAsync();
