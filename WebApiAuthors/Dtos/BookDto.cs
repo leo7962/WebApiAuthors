@@ -1,17 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using WebApiAuthors.Validations;
 
-namespace WebApiAuthors.Entities;
+namespace WebApiAuthors.Dtos;
 
-public class Book
+public class BookDto
 {
     public int Id { get; set; }
 
-    [Required]
     [FirstCapitalLetter]
     [StringLength(250)]
     public string Title { get; set; }
 
-    public List<Comment> Comments { get; set; }
-    public List<BookAuthor> BooksAuthors { get; set; }
+    //public List<CommentDto> Comments { get; set; }
 }

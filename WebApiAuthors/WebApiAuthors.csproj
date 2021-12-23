@@ -7,7 +7,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1"/>
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.1"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.1"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.1"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.1">
             <PrivateAssets>all</PrivateAssets>
@@ -17,7 +19,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="wwwroot"/>
+        <Folder Include="Services"/>
     </ItemGroup>
 
 </Project>

@@ -1,10 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApiAuthors.Context;
+using WebApiAuthors.Dtos;
 using WebApiAuthors.Entities;
-using WebApiAuthors.Filters;
-using WebApiAuthors.Services;
 
 namespace WebApiAuthors.Controllers;
 
@@ -13,86 +12,49 @@ namespace WebApiAuthors.Controllers;
 public class AuthorsController : ControllerBase
 {
     private readonly DataContext _context;
-    private readonly ILogger<AuthorsController> _logger;
-    private readonly IService _service;
-    private readonly ServiceScoped _serviceScoped;
-    private readonly ServiceSingleton _serviceSingleton;
-    private readonly ServiceTransient _serviceTransient;
+    private readonly IMapper _mapper;
 
-    public AuthorsController(DataContext context, IService service, ServiceTransient serviceTransient,
-        ServiceScoped serviceScoped, ServiceSingleton serviceSingleton, ILogger<AuthorsController> logger)
+    public AuthorsController(DataContext context, IMapper mapper)
     {
         _context = context;
-        _service = service;
-        _serviceTransient = serviceTransient;
-        _serviceScoped = serviceScoped;
-        _serviceSingleton = serviceSingleton;
-        _logger = logger;
-    }
-
-    [HttpGet("GUID")]
-    [ResponseCache(Duration = 10)]
-    [ServiceFilter(typeof(MyFilterAction))]
-    public ActionResult ObtenerGuids()
-    {
-        return Ok(
-            new
-            {
-                AuthorsControllerTransient = _serviceTransient.Guid,
-                ServiceA_Transient = _service.GetTransient(),
-                AuthorsControllerScoped = _serviceScoped.Guid,
-                ServiceA_Scoped = _service.GetScoped(),
-                AuthorsControllerSingleton = _serviceSingleton.Guid,
-                ServiceA_Singleton = _service.GetSingleton()
-            }
-        );
+        _mapper = mapper;
     }
 
     [HttpGet] //api/autores
-    [HttpGet("listado")] //api/autores/listado
-    [HttpGet("/listado")] //listado
-    //[ResponseCache(Duration = 10)]
-    //[Authorize]
-    [ServiceFilter(typeof(MyFilterAction))]
-    public async Task<ActionResult<List<Author>>> Get()
+    public async Task<ActionResult<List<AuthorDto>>> Get()
     {
-        //throw new NotImplementedException();
-        _logger.LogInformation("Estamos obteniendo una lista de autores");
-        _logger.LogWarning("Este es un mensaje de prueba");
-        return await _context.Authors.Include(x => x.Books).ToListAsync();
-    }
-
-    [HttpGet("primero")] //api/autores/primero?nombre=leonardo&apellido=hernandez
-    public async Task<ActionResult<Author>> FirstAuthor([FromHeader] int value, [FromQuery] string name)
-    {
-        return await _context.Authors.Include(x => x.Books).FirstOrDefaultAsync();
+        var authors = await _context.Authors.ToListAsync();
+        return Ok(_mapper.Map<List<AuthorDto>>(authors));
     }
 
     //[HttpGet("{id:int}/{param2?}")] se puede agregar varios parametros separados por /
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<Author>> Get([FromRoute] int id)
+    public async Task<ActionResult<AuthorDtoWithBooks>> Get([FromRoute] int id)
     {
-        var author = await _context.Authors.Include(x => x.Books).FirstOrDefaultAsync(x => x.Id == id);
+        var author = await _context.Authors.Include(y => y.BooksAuthors).ThenInclude(z => z.Book)
+            .FirstOrDefaultAsync(x => x.Id == id);
         if (author == null) return NotFound();
 
-        return author;
+        return _mapper.Map<AuthorDtoWithBooks>(author);
     }
 
     [HttpGet("{name}")]
-    public async Task<ActionResult<Author>> Get([FromRoute] string name)
+    public async Task<ActionResult<List<AuthorDto>>> Get([FromRoute] string name)
     {
-        var author = await _context.Authors.Include(x => x.Books).FirstOrDefaultAsync(x => x.Name.Contains(name));
-        if (author == null) return NotFound();
+        var author = await _context.Authors.Where(x => x.Name.Contains(name)).ToListAsync();
 
-        return Ok(author);
+        return Ok(_mapper.Map<List<AuthorDto>>(author));
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] Author author)
+    public async Task<IActionResult> Post([FromBody] AuthorCreatedDto authorDto)
     {
         //Validaciones en el controlador
-        var existsUser = await _context.Authors.AnyAsync(x => x.Name == author.Name);
-        if (existsUser) return BadRequest($"Ya existe un autor con el nombre {author.Name}");
+        var existsUser = await _context.Authors.AnyAsync(x => x.Name == authorDto.Name);
+
+        if (existsUser) return BadRequest($"Ya existe un autor con el nombre {authorDto.Name}");
+
+        var author = _mapper.Map<Author>(authorDto);
 
         _context.Add(author);
         await _context.SaveChangesAsync();
@@ -100,14 +62,14 @@ public class AuthorsController : ControllerBase
     }
 
     [HttpPut("{id:int}")] //Api/autores/id = 1 o 2
-    public async Task<IActionResult> Put(Author author, int id)
+    public async Task<IActionResult> Put(AuthorDto authorDto, int id)
     {
-        if (author.Id != id) return BadRequest("El id del autor no coincide con el id de la URL");
+        if (authorDto.Id != id) return BadRequest("El id del autor no coincide con el id de la URL");
 
         var exists = await _context.Authors.AnyAsync(x => x.Id == id);
         if (!exists) return NotFound();
 
-        _context.Update(author);
+        _context.Update(authorDto);
         await _context.SaveChangesAsync();
         return Ok();
     }
