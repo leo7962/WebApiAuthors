@@ -3,7 +3,7 @@ using WebApiAuthors.Validations;
 
 namespace WebApiAuthors.Dtos;
 
-public class BookCreatedDto
+public class BookPatchDto
 {
     [FirstCapitalLetter]
     [StringLength(250)]
@@ -11,5 +11,4 @@ public class BookCreatedDto
     public string Title { get; set; }
 
     public DateTime PublicationDate { get; set; }
-    public List<int> AuthorIds { get; set; }
 }

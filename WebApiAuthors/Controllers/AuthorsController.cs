@@ -28,7 +28,7 @@ public class AuthorsController : ControllerBase
     }
 
     //[HttpGet("{id:int}/{param2?}")] se puede agregar varios parametros separados por /
-    [HttpGet("{id:int}")]
+    [HttpGet("{id:int}", Name = "obtenerAutor")]
     public async Task<ActionResult<AuthorDtoWithBooks>> Get([FromRoute] int id)
     {
         var author = await _context.Authors.Include(y => y.BooksAuthors).ThenInclude(z => z.Book)
@@ -47,31 +47,34 @@ public class AuthorsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] AuthorCreatedDto authorDto)
+    public async Task<IActionResult> Post([FromBody] AuthorCreatedDto authorCreatedDto)
     {
         //Validaciones en el controlador
-        var existsUser = await _context.Authors.AnyAsync(x => x.Name == authorDto.Name);
+        var existsUser = await _context.Authors.AnyAsync(x => x.Name == authorCreatedDto.Name);
 
-        if (existsUser) return BadRequest($"Ya existe un autor con el nombre {authorDto.Name}");
+        if (existsUser) return BadRequest($"Ya existe un autor con el nombre {authorCreatedDto.Name}");
 
-        var author = _mapper.Map<Author>(authorDto);
+        var author = _mapper.Map<Author>(authorCreatedDto);
 
         _context.Add(author);
         await _context.SaveChangesAsync();
-        return Ok();
+
+        var authorDto = _mapper.Map<AuthorDto>(author);
+        return CreatedAtRoute("obtenerAutor", new {id = author.Id}, authorDto);
     }
 
     [HttpPut("{id:int}")] //Api/autores/id = 1 o 2
-    public async Task<IActionResult> Put(AuthorDto authorDto, int id)
+    public async Task<IActionResult> Put(AuthorCreatedDto authorDto, int id)
     {
-        if (authorDto.Id != id) return BadRequest("El id del autor no coincide con el id de la URL");
-
         var exists = await _context.Authors.AnyAsync(x => x.Id == id);
         if (!exists) return NotFound();
 
-        _context.Update(authorDto);
+        var author = _mapper.Map<Author>(authorDto);
+        author.Id = id;
+
+        _context.Update(author);
         await _context.SaveChangesAsync();
-        return Ok();
+        return NoContent();
     }
 
     [HttpDelete("{id:int}")] //Api/autores/2
@@ -82,6 +85,6 @@ public class AuthorsController : ControllerBase
 
         _context.Remove(new Author {Id = id});
         await _context.SaveChangesAsync();
-        return Ok();
+        return NoContent();
     }
 }

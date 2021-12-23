@@ -1,6 +1,4 @@
-﻿using WebApiAuthors.Entities;
-
-namespace WebApiAuthors.Dtos;
+﻿namespace WebApiAuthors.Dtos;
 
 public class CommentCreatedDto
 {

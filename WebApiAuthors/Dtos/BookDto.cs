@@ -11,5 +11,7 @@ public class BookDto
     [StringLength(250)]
     public string Title { get; set; }
 
+    public DateTime PublicationDate { get; set; }
+
     //public List<CommentDto> Comments { get; set; }
 }

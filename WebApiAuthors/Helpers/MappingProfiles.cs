@@ -15,6 +15,7 @@ public class MappingProfiles : Profile
         CreateMap<BookCreatedDto, Book>().ForMember(x => x.BooksAuthors, y => y.MapFrom(MapBooksAuthos));
         CreateMap<Book, BookDto>();
         CreateMap<Book, BookDtoWithAuthors>().ForMember(x => x.Authors, y => y.MapFrom(MapAuthorDto));
+        CreateMap<BookPatchDto, Book>().ReverseMap();
 
         CreateMap<CommentCreatedDto, Comment>();
         CreateMap<Comment, CommentDto>();

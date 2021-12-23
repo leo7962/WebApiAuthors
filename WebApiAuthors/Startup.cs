@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using WebApiAuthors.Context;
 using WebApiAuthors.Filters;
 using WebApiAuthors.Helpers;
@@ -21,7 +21,8 @@ public class Startup
     {
         // Add services to the container.
         services.AddControllers(options => { options.Filters.Add(typeof(MyExceptionFilter)); })
-            .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+            .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles)
+            .AddNewtonsoftJson();
         services.AddDbContext<DataContext>(options =>
             options.UseSqlServer(_configuration.GetConnectionString("DefaultConnection")));
 
