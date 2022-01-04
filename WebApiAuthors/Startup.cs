@@ -10,6 +10,7 @@ using WebApiAuthors.Context;
 using WebApiAuthors.Filters;
 using WebApiAuthors.Helpers;
 using WebApiAuthors.Middlewares;
+using WebApiAuthors.Services;
 
 namespace WebApiAuthors;
 
@@ -88,6 +89,9 @@ public class Startup
                 builder.WithOrigins("https://www.apirequest.io").AllowAnyMethod().AllowAnyHeader();
             });
         });
+
+        services.AddDataProtection();
+        services.AddTransient<HashService>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)

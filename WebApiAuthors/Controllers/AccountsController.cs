@@ -3,10 +3,12 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using WebApiAuthors.Dtos;
+using WebApiAuthors.Services;
 
 namespace WebApiAuthors.Controllers;
 
@@ -16,14 +18,65 @@ public class AccountsController : ControllerBase
 {
     private readonly IConfiguration _configuration;
     private readonly SignInManager<IdentityUser> _signInManager;
+    private readonly HashService _hashService;
     private readonly UserManager<IdentityUser> _userManager;
+    private readonly IDataProtector _dataProtector;
 
     public AccountsController(UserManager<IdentityUser> userManager, IConfiguration configuration,
-        SignInManager<IdentityUser> signInManager)
+        SignInManager<IdentityUser> signInManager, IDataProtectionProvider dataProtectionProvider,
+        HashService hashService)
     {
         _userManager = userManager;
         _configuration = configuration;
         _signInManager = signInManager;
+        _hashService = hashService;
+        _dataProtector =
+            dataProtectionProvider.CreateProtector("b220ed5967a57820c3b1293bc0a65f2c9f824a0135e1b136c4d1afc1ec291611");
+    }
+
+    [HttpGet("hash/{plainText}")]
+    public ActionResult MakeHash(string plainText)
+    {
+        var result1 = _hashService.Hash(plainText);
+        var result2 = _hashService.Hash(plainText);
+
+        return Ok(new
+        {
+            textoPlano = plainText,
+            hash1 = result1,
+            hash2 = result2
+        });
+    }
+
+    [HttpGet("Encriptar")]
+    public ActionResult Encript()
+    {
+        var plainText = "Leonardo Hernández";
+        var encriptText = _dataProtector.Protect(plainText);
+        var desencriptText = _dataProtector.Unprotect(encriptText);
+
+        return Ok(new
+        {
+            textoPlano = plainText,
+            textoCifrado = encriptText,
+            textoDescifradp = desencriptText
+        });
+    }
+
+    [HttpGet("EncriptarPorTiempo")]
+    public ActionResult EncriptTime()
+    {
+        var timeProtector = _dataProtector.ToTimeLimitedDataProtector();
+        var plainText = "Leonardo Hernández";
+        var encriptText = timeProtector.Protect(plainText, lifetime: TimeSpan.FromSeconds(5));
+        var desencriptText = timeProtector.Unprotect(encriptText);
+
+        return Ok(new
+        {
+            textoPlano = plainText,
+            textoCifrado = encriptText,
+            textoDescifradp = desencriptText
+        });
     }
 
     [HttpPost("registrar")] //api/cuentas/registrar
