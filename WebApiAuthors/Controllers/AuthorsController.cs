@@ -11,7 +11,7 @@ namespace WebApiAuthors.Controllers;
 
 [ApiController]
 [Route("api/autores")]
-[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
 public class AuthorsController : ControllerBase
 {
     private readonly DataContext _context;

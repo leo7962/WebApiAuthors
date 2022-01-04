@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApiAuthors.Context;
@@ -13,11 +16,13 @@ public class CommentsController : ControllerBase
 {
     private readonly DataContext _context;
     private readonly IMapper _mapper;
+    private readonly UserManager<IdentityUser> _userManager;
 
-    public CommentsController(DataContext context, IMapper mapper)
+    public CommentsController(DataContext context, IMapper mapper, UserManager<IdentityUser> userManager)
     {
         _context = context;
         _mapper = mapper;
+        _userManager = userManager;
     }
 
     [HttpGet]
@@ -39,20 +44,34 @@ public class CommentsController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult> Post(int bookId, CommentCreatedDto commentCreatedDto)
     {
-        var exists = await _context.Books.AnyAsync(x => x.Id == bookId);
-        if (!exists) return NotFound();
+        var emailClaim = HttpContext.User.Claims.FirstOrDefault(claim => claim.Type == "email");
 
-        var comment = _mapper.Map<Comment>(commentCreatedDto);
-        comment.BookId = bookId;
+        if (emailClaim != null)
+        {
+            var email = emailClaim.Value;
+            var user = await _userManager.FindByEmailAsync(email);
+            var userId = user.Id;
 
-        _context.Add(comment);
-        await _context.SaveChangesAsync();
+            var exists = await _context.Books.AnyAsync(x => x.Id == bookId);
 
-        var commentDto = _mapper.Map<CommentDto>(comment);
+            if (!exists) return NotFound();
 
-        return CreatedAtRoute("ObtenerComentario", new {id = comment.Id, bookId}, commentDto);
+            var comment = _mapper.Map<Comment>(commentCreatedDto);
+            comment.BookId = bookId;
+            comment.UserId = userId;
+
+            _context.Add(comment);
+            await _context.SaveChangesAsync();
+
+            var commentDto = _mapper.Map<CommentDto>(comment);
+
+            return CreatedAtRoute("ObtenerComentario", new {id = comment.Id, bookId}, commentDto);
+        }
+
+        return BadRequest("El email no se encuentra registrado");
     }
 
     [HttpPut("{id:int}")]

@@ -1,10 +1,11 @@
-﻿using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
-using System.Text.Json.Serialization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using System.Text.Json.Serialization;
 using WebApiAuthors.Context;
 using WebApiAuthors.Filters;
 using WebApiAuthors.Helpers;
@@ -18,6 +19,7 @@ public class Startup
 
     public Startup(IConfiguration configuration)
     {
+        JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
         _configuration = configuration;
     }
 
@@ -73,6 +75,19 @@ public class Startup
         services.AddAutoMapper(typeof(MappingProfiles));
         services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<DataContext>()
             .AddDefaultTokenProviders();
+
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("IsAdmin", policy => policy.RequireClaim("isAdmin"));
+        });
+
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(builder =>
+            {
+                builder.WithOrigins("https://www.apirequest.io").AllowAnyMethod().AllowAnyHeader();
+            });
+        });
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)
@@ -92,6 +107,8 @@ public class Startup
         app.UseHttpsRedirection();
 
         app.UseRouting();
+
+        app.UseCors();
 
         app.UseAuthorization();
 
