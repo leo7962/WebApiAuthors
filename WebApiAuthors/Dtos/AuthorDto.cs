@@ -3,7 +3,7 @@ using WebApiAuthors.Validations;
 
 namespace WebApiAuthors.Dtos;
 
-public class AuthorDto
+public class AuthorDto : Recurse
 {
     public int Id { get; set; }
 

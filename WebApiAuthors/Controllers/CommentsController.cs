@@ -25,7 +25,7 @@ public class CommentsController : ControllerBase
         _userManager = userManager;
     }
 
-    [HttpGet]
+    [HttpGet(Name = "obtenerComentariosLibro")]
     public async Task<ActionResult<List<CommentDto>>> Get(int bookId)
     {
         var exists = await _context.Books.AnyAsync(x => x.Id == bookId);
@@ -34,7 +34,7 @@ public class CommentsController : ControllerBase
         return Ok(_mapper.Map<List<CommentDto>>(comments));
     }
 
-    [HttpGet("{id:int}", Name = "ObtenerComentario")]
+    [HttpGet("{id:int}", Name = "obtenerComentario")]
     public async Task<ActionResult<CommentDto>> GetId(int id)
     {
         var comment = await _context.Comments.FirstOrDefaultAsync(x => x.Id == id);
@@ -43,7 +43,7 @@ public class CommentsController : ControllerBase
         return Ok(_mapper.Map<CommentDto>(comment));
     }
 
-    [HttpPost]
+    [HttpPost(Name = "crearComentario")]
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public async Task<ActionResult> Post(int bookId, CommentCreatedDto commentCreatedDto)
     {
@@ -74,7 +74,7 @@ public class CommentsController : ControllerBase
         return BadRequest("El email no se encuentra registrado");
     }
 
-    [HttpPut("{id:int}")]
+    [HttpPut("{id:int}",Name = "actualizarComentario")]
     public async Task<ActionResult> Put(int bookId, int id, CommentCreatedDto commentCreatedDto)
     {
         var exists = await _context.Books.AnyAsync(x => x.Id == bookId);

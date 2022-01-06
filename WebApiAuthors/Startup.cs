@@ -6,6 +6,7 @@ using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using WebApiAuthors.Context;
 using WebApiAuthors.Filters;
 using WebApiAuthors.Helpers;
@@ -73,6 +74,7 @@ public class Startup
                 }
             });
         });
+
         services.AddAutoMapper(typeof(MappingProfiles));
         services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<DataContext>()
             .AddDefaultTokenProviders();
@@ -92,6 +94,9 @@ public class Startup
 
         services.AddDataProtection();
         services.AddTransient<HashService>();
+        services.AddTransient<GenerateLink>();
+        services.AddTransient<HateoasAuthorFilterAttribute>();
+        services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger)

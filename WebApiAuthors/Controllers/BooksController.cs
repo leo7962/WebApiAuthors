@@ -21,7 +21,7 @@ public class BooksController : ControllerBase
         _mapper = mapper;
     }
 
-    [HttpGet("{id:int}", Name = "ObtenerLibtro")]
+    [HttpGet("{id:int}", Name = "obtenerLibtro")]
     public async Task<ActionResult<BookDtoWithAuthors>> Get(int id)
     {
         var book = await _context.Books.Include(y => y.BooksAuthors).ThenInclude(z => z.Author)
@@ -33,7 +33,7 @@ public class BooksController : ControllerBase
         return Ok(_mapper.Map<BookDtoWithAuthors>(book));
     }
 
-    [HttpPost]
+    [HttpPost(Name = "crearLibro")]
     public async Task<ActionResult> Post(BookCreatedDto bookCreatedDto)
     {
         if (bookCreatedDto.AuthorIds == null) return BadRequest("No se puede crear un libro sin autores");
@@ -56,7 +56,7 @@ public class BooksController : ControllerBase
         return CreatedAtRoute("ObtenerLibtro", new {id = book.Id}, bookDto);
     }
 
-    [HttpPut("{id:int}")]
+    [HttpPut("{id:int}", Name = "actualizarLibro")]
     public async Task<ActionResult> Put(int id, BookCreatedDto bookCreatedDto)
     {
         var book = await _context.Books.Include(x => x.BooksAuthors).FirstOrDefaultAsync(x => x.Id == id);
@@ -70,7 +70,7 @@ public class BooksController : ControllerBase
         return NoContent();
     }
 
-    [HttpPatch("{id:int}")]
+    [HttpPatch("{id:int}",Name = "patchLibro")]
     public async Task<ActionResult> Patch(int id, JsonPatchDocument<BookPatchDto> patchDocument)
     {
         if (patchDocument == null) return BadRequest();
@@ -92,7 +92,7 @@ public class BooksController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{id:int}")]
+    [HttpDelete("{id:int}",Name = "borrarLibro")]
     public async Task<ActionResult> Delete(int id)
     {
         var exists = await _context.Books.AnyAsync(x => x.Id == id);
