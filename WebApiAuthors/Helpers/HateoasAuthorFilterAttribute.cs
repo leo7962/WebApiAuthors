@@ -1,5 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using WebApiAuthors.Dtos;
 using WebApiAuthors.Services;
@@ -31,7 +30,7 @@ public class HateoasAuthorFilterAttribute : HateosFilterAttribute
         if (autorDto == null)
         {
             var authorDtos = result.Value as List<AuthorDto> ??
-                             throw new ArgumentException("Se esperaba una instancia del AuthorDto");
+                             throw new ArgumentException("Se esperaba una instancia del AuthorDto o List<AuthorDto>");
 
             authorDtos.ForEach(async author => await _generateLink.GenerateLinks(author));
             result.Value = authorDtos;
@@ -40,7 +39,6 @@ public class HateoasAuthorFilterAttribute : HateosFilterAttribute
         {
             await _generateLink.GenerateLinks(autorDto);
         }
-
 
         await next();
     }

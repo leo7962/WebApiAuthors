@@ -13,7 +13,7 @@ public class HateosFilterAttribute : ResultFilterAttribute
             return false;
         }
 
-        var header = context.HttpContext.Request.Headers["inlcludeHateoas"];
+        var header = context.HttpContext.Request.Headers["includeHateoas"];
         if (header.Count == 0)
         {
             return false;

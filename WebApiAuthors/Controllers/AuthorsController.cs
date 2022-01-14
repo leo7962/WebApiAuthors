@@ -17,52 +17,31 @@ public class AuthorsController : ControllerBase
 {
     private readonly DataContext _context;
     private readonly IMapper _mapper;
-    private readonly IAuthorizationService _authorizationService;
 
-    public AuthorsController(DataContext context, IMapper mapper, IAuthorizationService authorizationService)
+    public AuthorsController(DataContext context, IMapper mapper)
     {
         _context = context;
         _mapper = mapper;
-        _authorizationService = authorizationService;
     }
 
     [HttpGet(Name = "obtenerAutores")] //api/autores
     [AllowAnonymous]
-    public async Task<ActionResult<RecursesCollection<AuthorDto>>> Get([FromQuery] bool inlcludeHateoas = true)
+    [ServiceFilter(typeof(HateoasAuthorFilterAttribute))]
+    public async Task<ActionResult<List<AuthorDto>>> Get()
     {
         var authors = await _context.Authors.ToListAsync();
-        var dtos = _mapper.Map<List<AuthorDto>>(authors);
-
-        if (inlcludeHateoas)
-        {
-            var isAdmin = await _authorizationService.AuthorizeAsync(User, "isAdmin");
-            //dtos.ForEach(dto => GenerateLinks(dto, isAdmin.Succeeded));
-
-            var result = new RecursesCollection<AuthorDto> {Values = dtos};
-
-            result.Links.Add(new DataHateoas(link: Url.Link("obtenerAutores", new { }), description: "self",
-                method: "GET"));
-            if (isAdmin.Succeeded)
-            {
-                result.Links.Add(new DataHateoas(link: Url.Link("crearAutor", new { }), description: "crear-autor",
-                    method: "POST"));
-            }
-
-            return Ok(result);
-        }
-
-
-        return Ok(dtos);
+        return _mapper.Map<List<AuthorDto>>(authors);
     }
 
     //[HttpGet("{id:int}/{param2?}")] se puede agregar varios parametros separados por /
     [HttpGet("{id:int}", Name = "obtenerAutor")]
     [AllowAnonymous]
     [ServiceFilter(typeof(HateoasAuthorFilterAttribute))]
-    public async Task<ActionResult<AuthorDtoWithBooks>> Get([FromRoute] int id, [FromHeader] string includeHateoas)
+    public async Task<ActionResult<AuthorDtoWithBooks>> Get(int id)
     {
         var author = await _context.Authors.Include(y => y.BooksAuthors).ThenInclude(z => z.Book)
             .FirstOrDefaultAsync(x => x.Id == id);
+
         if (author == null) return NotFound();
 
         var dto = _mapper.Map<AuthorDtoWithBooks>(author);
@@ -71,7 +50,7 @@ public class AuthorsController : ControllerBase
     }
 
     [HttpGet("{name}", Name = "obtenerAutorPorNombre")]
-    public async Task<ActionResult<List<AuthorDto>>> Get([FromRoute] string name)
+    public async Task<ActionResult<List<AuthorDto>>> GetByName([FromRoute] string name)
     {
         var author = await _context.Authors.Where(x => x.Name.Contains(name)).ToListAsync();
 
