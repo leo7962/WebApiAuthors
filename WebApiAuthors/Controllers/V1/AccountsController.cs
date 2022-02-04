@@ -10,15 +10,15 @@ using Microsoft.IdentityModel.Tokens;
 using WebApiAuthors.Dtos;
 using WebApiAuthors.Services;
 
-namespace WebApiAuthors.Controllers;
+namespace WebApiAuthors.Controllers.V1;
 
 [ApiController]
-[Route("api/cuentas")]
+[Route("api/v1/cuentas")]
 public class AccountsController : ControllerBase
 {
     private readonly IConfiguration _configuration;
-    private readonly SignInManager<IdentityUser> _signInManager;
     private readonly HashService _hashService;
+    private readonly SignInManager<IdentityUser> _signInManager;
     private readonly UserManager<IdentityUser> _userManager;
 
     public AccountsController(UserManager<IdentityUser> userManager, IConfiguration configuration,
@@ -31,7 +31,7 @@ public class AccountsController : ControllerBase
         _hashService = hashService;
     }
 
-    [HttpPost("registrar",Name = "registrarUsuario")] //api/cuentas/registrar
+    [HttpPost("registrar", Name = "registrarUsuario")] //api/cuentas/registrar
     public async Task<ActionResult<AuthenticationResponse>> Register(UserCredential userCredential)
     {
         var user = new IdentityUser {UserName = userCredential.Email, Email = userCredential.Email};
@@ -42,7 +42,7 @@ public class AccountsController : ControllerBase
         return BadRequest(result.Errors);
     }
 
-    [HttpPost("login",Name = "loginUsuario")]
+    [HttpPost("login", Name = "loginUsuario")]
     public async Task<ActionResult<AuthenticationResponse>> Login(UserCredential userCredential)
     {
         var result = await _signInManager.PasswordSignInAsync(userCredential.Email, userCredential.Password,
@@ -75,7 +75,7 @@ public class AccountsController : ControllerBase
         return NoContent();
     }
 
-    [HttpPost("RemoverAdmin",Name = "removerAdmin")]
+    [HttpPost("RemoverAdmin", Name = "removerAdmin")]
     public async Task<ActionResult> DeleteAdmin(EditAdminDto editAdminDto)
     {
         var user = await _userManager.FindByEmailAsync(editAdminDto.Email);

@@ -8,10 +8,10 @@ using WebApiAuthors.Dtos;
 using WebApiAuthors.Entities;
 using WebApiAuthors.Helpers;
 
-namespace WebApiAuthors.Controllers;
+namespace WebApiAuthors.Controllers.V2;
 
 [ApiController]
-[Route("api/autores")]
+[Route("api/v2/autores")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
 public class AuthorsController : ControllerBase
 {
@@ -30,6 +30,7 @@ public class AuthorsController : ControllerBase
     public async Task<ActionResult<List<AuthorDto>>> Get()
     {
         var authors = await _context.Authors.ToListAsync();
+        authors.ForEach(author => author.Name = author.Name.ToUpper());
         return _mapper.Map<List<AuthorDto>>(authors);
     }
 
@@ -67,7 +68,7 @@ public class AuthorsController : ControllerBase
 
         var author = _mapper.Map<Author>(authorCreatedDto);
 
-        _context.Add(author);
+        _context.Add((object) author);
         await _context.SaveChangesAsync();
 
         var authorDto = _mapper.Map<AuthorDto>(author);

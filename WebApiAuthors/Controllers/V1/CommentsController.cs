@@ -8,10 +8,10 @@ using WebApiAuthors.Context;
 using WebApiAuthors.Dtos;
 using WebApiAuthors.Entities;
 
-namespace WebApiAuthors.Controllers;
+namespace WebApiAuthors.Controllers.V1;
 
 [ApiController]
-[Route("api/libros/{bookId:int}/comentarios")]
+[Route("api/v1/libros/{bookId:int}/comentarios")]
 public class CommentsController : ControllerBase
 {
     private readonly DataContext _context;
@@ -74,7 +74,7 @@ public class CommentsController : ControllerBase
         return BadRequest("El email no se encuentra registrado");
     }
 
-    [HttpPut("{id:int}",Name = "actualizarComentario")]
+    [HttpPut("{id:int}", Name = "actualizarComentario")]
     public async Task<ActionResult> Put(int bookId, int id, CommentCreatedDto commentCreatedDto)
     {
         var exists = await _context.Books.AnyAsync(x => x.Id == bookId);

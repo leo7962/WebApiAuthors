@@ -6,10 +6,10 @@ using WebApiAuthors.Context;
 using WebApiAuthors.Dtos;
 using WebApiAuthors.Entities;
 
-namespace WebApiAuthors.Controllers;
+namespace WebApiAuthors.Controllers.V1;
 
 [ApiController]
-[Route("api/libros")]
+[Route("api/v1/libros")]
 public class BooksController : ControllerBase
 {
     private readonly DataContext _context;
@@ -70,7 +70,7 @@ public class BooksController : ControllerBase
         return NoContent();
     }
 
-    [HttpPatch("{id:int}",Name = "patchLibro")]
+    [HttpPatch("{id:int}", Name = "patchLibro")]
     public async Task<ActionResult> Patch(int id, JsonPatchDocument<BookPatchDto> patchDocument)
     {
         if (patchDocument == null) return BadRequest();
@@ -92,7 +92,7 @@ public class BooksController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{id:int}",Name = "borrarLibro")]
+    [HttpDelete("{id:int}", Name = "borrarLibro")]
     public async Task<ActionResult> Delete(int id)
     {
         var exists = await _context.Books.AnyAsync(x => x.Id == id);
