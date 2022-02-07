@@ -28,7 +28,11 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         // Add services to the container.
-        services.AddControllers(options => { options.Filters.Add(typeof(MyExceptionFilter)); })
+        services.AddControllers(options =>
+            {
+                options.Filters.Add(typeof(MyExceptionFilter));
+                options.Conventions.Add(new SwaggerGroupByVersion());
+            })
             .AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles)
             .AddNewtonsoftJson();
         services.AddDbContext<DataContext>(options =>
@@ -50,7 +54,9 @@ public class Startup
         services.AddSwaggerGen(x =>
         {
             x.SwaggerDoc("v1", new OpenApiInfo() {Title = "WebApiAutores", Version = "v1"});
+            x.SwaggerDoc("v2", new OpenApiInfo() {Title = "WebApiAutores", Version = "v2"});
             x.OperationFilter<AddParameterHateoas>();
+            x.OperationFilter<AddParameterXVersion>();
             x.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
             {
                 Name = "Authorization",
@@ -111,7 +117,11 @@ public class Startup
         {
             app.UseDeveloperExceptionPage();
             app.UseSwagger();
-            app.UseSwaggerUI();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "webapiAutores V1");
+                c.SwaggerEndpoint("/swagger/v2/swagger.json", "webapiAutores V2");
+            });
         }
 
         app.UseHttpsRedirection();

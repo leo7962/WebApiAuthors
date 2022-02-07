@@ -11,7 +11,9 @@ using WebApiAuthors.Helpers;
 namespace WebApiAuthors.Controllers.V2;
 
 [ApiController]
-[Route("api/v2/autores")]
+[Route("api/autores")]
+//[Route("api/v2/autores")]
+[HeaderPresent("x-version", "2")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
 public class AuthorsController : ControllerBase
 {
