@@ -23,7 +23,7 @@ public class GenerateLink
     private IUrlHelper BuildUrlHelper()
     {
         var factory = _httpContextAccessor.HttpContext?.RequestServices.GetRequiredService<IUrlHelperFactory>();
-        return factory.GetUrlHelper(_actionContextAccessor.ActionContext);
+        return factory?.GetUrlHelper(_actionContextAccessor.ActionContext);
     }
 
     private async Task<bool> IsAdmin()

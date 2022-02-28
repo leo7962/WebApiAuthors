@@ -17,7 +17,7 @@ public class HashService
         return Hash(plainText, sal);
     }
 
-    public HashResult Hash(string plaintext, byte[] sal)
+    private static HashResult Hash(string plaintext, byte[] sal)
     {
         var keyDerivade = KeyDerivation.Pbkdf2(plaintext, sal, KeyDerivationPrf.HMACSHA512,
             10000, 32);

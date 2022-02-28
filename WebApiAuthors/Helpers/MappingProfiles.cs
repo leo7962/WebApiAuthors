@@ -21,43 +21,35 @@ public class MappingProfiles : Profile
         CreateMap<Comment, CommentDto>();
     }
 
-    private List<BookAuthor> MapBooksAuthos(BookCreatedDto bookCreatedDto, Book book)
+    private static List<BookAuthor> MapBooksAuthos(BookCreatedDto bookCreatedDto, Book book)
     {
         var result = new List<BookAuthor>();
         if (bookCreatedDto.AuthorIds == null) return result;
 
-        foreach (var authorId in bookCreatedDto.AuthorIds) result.Add(new BookAuthor {AuthorId = authorId});
+        result.AddRange(bookCreatedDto.AuthorIds.Select(authorId => new BookAuthor {AuthorId = authorId}));
 
         return result;
     }
 
-    private List<AuthorDto> MapAuthorDto(Book book, BookDto bookDto)
+    private static List<AuthorDto> MapAuthorDto(Book book, BookDto bookDto)
     {
         var result = new List<AuthorDto>();
 
         if (book.BooksAuthors == null) return result;
 
-        foreach (var bookAuthor in book.BooksAuthors)
-            result.Add(new AuthorDto
-            {
-                Id = bookAuthor.AuthorId,
-                Name = bookAuthor.Author.Name
-            });
+        result.AddRange(book.BooksAuthors.Select(bookAuthor =>
+            new AuthorDto {Id = bookAuthor.AuthorId, Name = bookAuthor.Author.Name}));
 
         return result;
     }
 
-    private List<BookDto> MapAuthorDtoBook(Author author, AuthorDto authorDto)
+    private static List<BookDto> MapAuthorDtoBook(Author author, AuthorDto authorDto)
     {
         var result = new List<BookDto>();
         if (author.BooksAuthors == null) return result;
 
-        foreach (var bookAuthor in author.BooksAuthors)
-            result.Add(new BookDto
-            {
-                Id = bookAuthor.BookId,
-                Title = bookAuthor.Book.Title
-            });
+        result.AddRange(author.BooksAuthors.Select(bookAuthor =>
+            new BookDto {Id = bookAuthor.BookId, Title = bookAuthor.Book.Title}));
 
         return result;
     }

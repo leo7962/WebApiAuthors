@@ -16,9 +16,8 @@ public class HeaderPresentAttribute : Attribute, IActionConstraint
     public bool Accept(ActionConstraintContext context)
     {
         var headers = context.RouteContext.HttpContext.Request.Headers;
-        if (!headers.ContainsKey(_header)) return false;
-
-        return string.Equals(headers[_header], _value, StringComparison.OrdinalIgnoreCase);
+        return headers.ContainsKey(_header) &&
+               string.Equals(headers[_header], _value, StringComparison.OrdinalIgnoreCase);
     }
 
     public int Order => 0;
