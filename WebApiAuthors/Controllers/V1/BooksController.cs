@@ -48,7 +48,7 @@ public class BooksController : ControllerBase
 
         AssignOrderAuthors(book);
 
-        _context.Add(book);
+        _context.Add((object) book);
         await _context.SaveChangesAsync();
 
         var bookDto = _mapper.Map<BookDto>(book);

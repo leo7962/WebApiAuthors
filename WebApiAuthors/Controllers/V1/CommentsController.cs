@@ -63,7 +63,7 @@ public class CommentsController : ControllerBase
             comment.BookId = bookId;
             comment.UserId = userId;
 
-            _context.Add(comment);
+            _context.Add((object) comment);
             await _context.SaveChangesAsync();
 
             var commentDto = _mapper.Map<CommentDto>(comment);

@@ -8,9 +8,9 @@ namespace WebApiAuthors.Services;
 
 public class GenerateLink
 {
+    private readonly IActionContextAccessor _actionContextAccessor;
     private readonly IAuthorizationService _authorizationService;
     private readonly IHttpContextAccessor _httpContextAccessor;
-    private readonly IActionContextAccessor _actionContextAccessor;
 
     public GenerateLink(IAuthorizationService authorizationService, IHttpContextAccessor httpContextAccessor,
         IActionContextAccessor actionContextAccessor)
@@ -38,17 +38,17 @@ public class GenerateLink
         var isAdmin = await IsAdmin();
         var url = BuildUrlHelper();
 
-        authorDto.Links.Add(new DataHateoas(link: url.Link("obtenerAutor", new {id = authorDto.Id}),
-            description: "self",
-            method: "GET"));
+        authorDto.Links.Add(new DataHateoas(url.Link("obtenerAutor", new {id = authorDto.Id}),
+            "self",
+            "GET"));
         if (isAdmin)
         {
-            authorDto.Links.Add(new DataHateoas(link: url.Link("actualizarAutor", new {id = authorDto.Id}),
-                description: "autor-Actualizar",
-                method: "PUT"));
-            authorDto.Links.Add(new DataHateoas(link: url.Link("BorrarAutor", new {id = authorDto.Id}),
-                description: "self",
-                method: "DELETE"));
+            authorDto.Links.Add(new DataHateoas(url.Link("actualizarAutor", new {id = authorDto.Id}),
+                "autor-Actualizar",
+                "PUT"));
+            authorDto.Links.Add(new DataHateoas(url.Link("BorrarAutor", new {id = authorDto.Id}),
+                "self",
+                "DELETE"));
         }
     }
 }

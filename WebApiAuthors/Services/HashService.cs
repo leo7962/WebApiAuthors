@@ -19,12 +19,12 @@ public class HashService
 
     public HashResult Hash(string plaintext, byte[] sal)
     {
-        var keyDerivade = KeyDerivation.Pbkdf2(password: plaintext, salt: sal, prf: KeyDerivationPrf.HMACSHA512,
-            iterationCount: 10000, numBytesRequested: 32);
+        var keyDerivade = KeyDerivation.Pbkdf2(plaintext, sal, KeyDerivationPrf.HMACSHA512,
+            10000, 32);
 
         var hash = Convert.ToBase64String(keyDerivade);
 
-        return new HashResult()
+        return new HashResult
         {
             Hash = hash,
             Sal = sal

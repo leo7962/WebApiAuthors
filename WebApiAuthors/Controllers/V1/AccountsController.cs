@@ -59,7 +59,7 @@ public class AccountsController : ControllerBase
         var emailClaim = HttpContext.User.Claims.FirstOrDefault(claim => claim.Type == "email");
         var email = emailClaim?.Value;
 
-        var credsUser = new UserCredential()
+        var credsUser = new UserCredential
         {
             Email = email
         };
@@ -103,7 +103,7 @@ public class AccountsController : ControllerBase
         var securityToken = new JwtSecurityToken(null, null, claim, expires: expiration,
             signingCredentials: creds);
 
-        return new AuthenticationResponse()
+        return new AuthenticationResponse
         {
             Token = new JwtSecurityTokenHandler().WriteToken(securityToken),
             Expiration = expiration

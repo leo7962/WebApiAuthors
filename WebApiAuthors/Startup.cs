@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Text;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using WebApiAuthors.Context;
 using WebApiAuthors.Filters;
 using WebApiAuthors.Helpers;
@@ -53,11 +53,11 @@ public class Startup
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(x =>
         {
-            x.SwaggerDoc("v1", new OpenApiInfo() {Title = "WebApiAutores", Version = "v1"});
-            x.SwaggerDoc("v2", new OpenApiInfo() {Title = "WebApiAutores", Version = "v2"});
+            x.SwaggerDoc("v1", new OpenApiInfo {Title = "WebApiAutores", Version = "v1"});
+            x.SwaggerDoc("v2", new OpenApiInfo {Title = "WebApiAutores", Version = "v2"});
             x.OperationFilter<AddParameterHateoas>();
             x.OperationFilter<AddParameterXVersion>();
-            x.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+            x.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 Name = "Authorization",
                 Type = SecuritySchemeType.ApiKey,

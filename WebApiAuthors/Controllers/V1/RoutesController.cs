@@ -25,17 +25,15 @@ public class RoutesController : ControllerBase
 
         var isAdmin = await _authorizationService.AuthorizeAsync(User, "isAdmin");
 
-        datosHateoas.Add(new DataHateoas(link: Url.Link("ObtenerRoot", new { }), description: "self", method: "GET"));
+        datosHateoas.Add(new DataHateoas(Url.Link("ObtenerRoot", new { }), "self", "GET"));
 
-        datosHateoas.Add(new DataHateoas(link: Url.Link("obtenerAutores", new { }), description: "autores",
-            method: "GET"));
-        if (isAdmin.Succeeded)
-        {
-            datosHateoas.Add(new DataHateoas(link: Url.Link("crearAutor", new { }), description: "autor-crear",
-                method: "POST"));
-            datosHateoas.Add(new DataHateoas(link: Url.Link("crearLibro", new { }), description: "libro-crear",
-                method: "POST"));
-        }
+        datosHateoas.Add(new DataHateoas(Url.Link("obtenerAutores", new { }), "autores",
+            "GET"));
+        if (!isAdmin.Succeeded) return datosHateoas;
+        datosHateoas.Add(new DataHateoas(Url.Link("crearAutor", new { }), "autor-crear",
+            "POST"));
+        datosHateoas.Add(new DataHateoas(Url.Link("crearLibro", new { }), "libro-crear",
+            "POST"));
 
         return datosHateoas;
     }

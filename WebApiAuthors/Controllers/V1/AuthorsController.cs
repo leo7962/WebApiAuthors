@@ -69,7 +69,7 @@ public class AuthorsController : ControllerBase
 
         var author = _mapper.Map<Author>(authorCreatedDto);
 
-        _context.Add(author);
+        _context.Add((object) author);
         await _context.SaveChangesAsync();
 
         var authorDto = _mapper.Map<AuthorDto>(author);

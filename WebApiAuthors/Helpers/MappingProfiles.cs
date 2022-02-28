@@ -38,7 +38,7 @@ public class MappingProfiles : Profile
         if (book.BooksAuthors == null) return result;
 
         foreach (var bookAuthor in book.BooksAuthors)
-            result.Add(new AuthorDto()
+            result.Add(new AuthorDto
             {
                 Id = bookAuthor.AuthorId,
                 Name = bookAuthor.Author.Name
