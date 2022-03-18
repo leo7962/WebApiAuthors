@@ -30,10 +30,12 @@ public class AuthorsController : ControllerBase
     [HttpGet(Name = "obtenerAutoresv1")] //api/autores
     [AllowAnonymous]
     [ServiceFilter(typeof(HateoasAuthorFilterAttribute))]
-    public async Task<ActionResult<List<AuthorDto>>> Get()
+    public async Task<ActionResult<List<AuthorDto>>> Get([FromQuery] PaginationDto paginationDto)
     {
-        var authors = await _context.Authors.ToListAsync();
-        return _mapper.Map<List<AuthorDto>>(authors);
+        var queryable = _context.Authors.AsQueryable();
+        await HttpContext.InsertParametersPaginationHeader(queryable);
+        var authors = await queryable.OrderBy(author => author.Name).Page(paginationDto).ToListAsync();
+        return Ok(_mapper.Map<List<AuthorDto>>(authors));
     }
 
     //[HttpGet("{id:int}/{param2?}")] se puede agregar varios parametros separados por /

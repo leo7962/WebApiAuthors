@@ -118,7 +118,8 @@ public class Startup
         {
             options.AddDefaultPolicy(builder =>
             {
-                builder.WithOrigins("https://www.apirequest.io").AllowAnyMethod().AllowAnyHeader();
+                builder.WithOrigins("https://www.apirequest.io").AllowAnyMethod().AllowAnyHeader()
+                    .WithExposedHeaders("cantidadTotalRegistros");
             });
         });
 

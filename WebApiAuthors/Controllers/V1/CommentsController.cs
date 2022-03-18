@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using WebApiAuthors.Context;
 using WebApiAuthors.Dtos;
 using WebApiAuthors.Entities;
+using WebApiAuthors.Helpers;
 
 namespace WebApiAuthors.Controllers.V1;
 
@@ -26,11 +27,16 @@ public class CommentsController : ControllerBase
     }
 
     [HttpGet(Name = "obtenerComentariosLibro")]
-    public async Task<ActionResult<List<CommentDto>>> Get(int bookId)
+    public async Task<ActionResult<List<CommentDto>>> Get(int bookId, [FromQuery] PaginationDto paginationDto)
     {
         var exists = await _context.Books.AnyAsync(x => x.Id == bookId);
+
         if (!exists) return NotFound();
-        var comments = await _context.Comments.Where(x => x.BookId == bookId).ToListAsync();
+
+        var queryable = _context.Comments.Where(x => x.BookId == bookId).AsQueryable();
+        await HttpContext.InsertParametersPaginationHeader(queryable);
+        var comments = await queryable.OrderBy(comment => comment.Id).Page(paginationDto).ToListAsync();
+
         return Ok(_mapper.Map<List<CommentDto>>(comments));
     }
 
