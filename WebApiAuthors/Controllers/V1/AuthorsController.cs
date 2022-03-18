@@ -15,6 +15,7 @@ namespace WebApiAuthors.Controllers.V1;
 //[Route("api/v1/autores")]
 [HeaderPresent("x-version", "1")]
 [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme, Policy = "IsAdmin")]
+// [ApiConventionType(typeof(DefaultApiConventions))]
 public class AuthorsController : ControllerBase
 {
     private readonly DataContext _context;
@@ -39,6 +40,8 @@ public class AuthorsController : ControllerBase
     [HttpGet("{id:int}", Name = "obtenerAutorv1")]
     [AllowAnonymous]
     [ServiceFilter(typeof(HateoasAuthorFilterAttribute))]
+    // [ProducesResponseType(404)]
+    // [ProducesResponseType(200)]
     public async Task<ActionResult<AuthorDtoWithBooks>> Get(int id)
     {
         var author = await _context.Authors.Include(y => y.BooksAuthors).ThenInclude(z => z.Book)
@@ -90,6 +93,11 @@ public class AuthorsController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    ///     Borra un autor en la base de datos
+    /// </summary>
+    /// <param name="id"> ID del autor a borrar</param>
+    /// <returns></returns>
     [HttpDelete("{id:int}", Name = "borrarAutorv1")] //Api/autores/2
     public async Task<IActionResult> Delete(int id)
     {

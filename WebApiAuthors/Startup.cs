@@ -1,8 +1,10 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -12,6 +14,8 @@ using WebApiAuthors.Filters;
 using WebApiAuthors.Helpers;
 using WebApiAuthors.Middlewares;
 using WebApiAuthors.Services;
+
+[assembly: ApiConventionType(typeof(DefaultApiConventions))]
 
 namespace WebApiAuthors;
 
@@ -53,7 +57,21 @@ public class Startup
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen(x =>
         {
-            x.SwaggerDoc("v1", new OpenApiInfo {Title = "WebApiAutores", Version = "v1"});
+            x.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Title = "WebApiAutores", Version = "v1",
+                Description = "Este es una Web api para trabajar con autores y libros",
+                Contact = new OpenApiContact
+                {
+                    Email = "ingenieroleonardo@outlook.com",
+                    Name = "Leonardo Fabián Hernández Peña",
+                    Url = new Uri("https://github.com/leo7962")
+                },
+                License = new OpenApiLicense
+                {
+                    Name = "GPL-3.0"
+                }
+            });
             x.SwaggerDoc("v2", new OpenApiInfo {Title = "WebApiAutores", Version = "v2"});
             x.OperationFilter<AddParameterHateoas>();
             x.OperationFilter<AddParameterXVersion>();
@@ -80,6 +98,11 @@ public class Startup
                     new string[] { }
                 }
             });
+
+            var fileXml = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+            var pathXml = Path.Combine(AppContext.BaseDirectory, fileXml);
+
+            x.IncludeXmlComments(pathXml);
         });
 
         services.AddAutoMapper(typeof(MappingProfiles));
