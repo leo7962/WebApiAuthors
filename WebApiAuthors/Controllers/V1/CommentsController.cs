@@ -55,29 +55,25 @@ public class CommentsController : ControllerBase
     {
         var emailClaim = HttpContext.User.Claims.FirstOrDefault(claim => claim.Type == "email");
 
-        if (emailClaim != null)
-        {
-            var email = emailClaim.Value;
-            var user = await _userManager.FindByEmailAsync(email);
-            var userId = user.Id;
+        if (emailClaim == null) return BadRequest("El email no se encuentra registrado");
+        var email = emailClaim.Value;
+        var user = await _userManager.FindByEmailAsync(email);
+        var userId = user.Id;
 
-            var exists = await _context.Books.AnyAsync(x => x.Id == bookId);
+        var exists = await _context.Books.AnyAsync(x => x.Id == bookId);
 
-            if (!exists) return NotFound();
+        if (!exists) return NotFound();
 
-            var comment = _mapper.Map<Comment>(commentCreatedDto);
-            comment.BookId = bookId;
-            comment.UserId = userId;
+        var comment = _mapper.Map<Comment>(commentCreatedDto);
+        comment.BookId = bookId;
+        comment.UserId = userId;
 
-            _context.Add((object) comment);
-            await _context.SaveChangesAsync();
+        _context.Add((object) comment);
+        await _context.SaveChangesAsync();
 
-            var commentDto = _mapper.Map<CommentDto>(comment);
+        var commentDto = _mapper.Map<CommentDto>(comment);
 
-            return CreatedAtRoute("ObtenerComentario", new {id = comment.Id, bookId}, commentDto);
-        }
-
-        return BadRequest("El email no se encuentra registrado");
+        return CreatedAtRoute("ObtenerComentario", new {id = comment.Id, bookId}, commentDto);
     }
 
     [HttpPut("{id:int}", Name = "actualizarComentario")]
