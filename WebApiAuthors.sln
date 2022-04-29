@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiAuthors", "WebApiAuthors\WebApiAuthors.csproj", "{D804A3D8-A6D1-4E32-AAB7-A2D39774B119}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiAuthors.Tests", "WebApiAuthors.Tests\WebApiAuthors.Tests.csproj", "{1046172A-A5E8-4089-B0AE-0CD170ACE3DC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{D804A3D8-A6D1-4E32-AAB7-A2D39774B119}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D804A3D8-A6D1-4E32-AAB7-A2D39774B119}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D804A3D8-A6D1-4E32-AAB7-A2D39774B119}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1046172A-A5E8-4089-B0AE-0CD170ACE3DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1046172A-A5E8-4089-B0AE-0CD170ACE3DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1046172A-A5E8-4089-B0AE-0CD170ACE3DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1046172A-A5E8-4089-B0AE-0CD170ACE3DC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
