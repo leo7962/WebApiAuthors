@@ -13,7 +13,7 @@ public class FirstCapitalLetterAttributeTests
         //Preparación
         var firstCapitalLetter = new FirstCapitalLetterAttribute();
         const string value = "felipe";
-        var valContext = new ValidationContext(new {Name = value});
+        var valContext = new ValidationContext(new { Name = value });
 
         //Ejecución
         var result = firstCapitalLetter.GetValidationResult(value, valContext);
@@ -29,7 +29,7 @@ public class FirstCapitalLetterAttributeTests
         //Preparación
         var firstCapitalLetter = new FirstCapitalLetterAttribute();
         const string value = null!;
-        var valContext = new ValidationContext(new {Name = value});
+        var valContext = new ValidationContext(new { Name = value });
 
         //Ejecución
         var result = firstCapitalLetter.GetValidationResult(value, valContext);
@@ -44,7 +44,7 @@ public class FirstCapitalLetterAttributeTests
         //Preparación
         var firstCapitalLetter = new FirstCapitalLetterAttribute();
         const string value = "Leonardo";
-        var valContext = new ValidationContext(new {Name = value});
+        var valContext = new ValidationContext(new { Name = value });
 
         //Ejecución
         var result = firstCapitalLetter.GetValidationResult(value, valContext);

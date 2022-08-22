@@ -38,15 +38,15 @@ public class GenerateLink
         var isAdmin = await IsAdmin();
         var url = BuildUrlHelper();
 
-        authorDto.Links.Add(new DataHateoas(url.Link("obtenerAutor", new {id = authorDto.Id}),
+        authorDto.Links.Add(new DataHateoas(url.Link("obtenerAutor", new { id = authorDto.Id }),
             "self",
             "GET"));
         if (isAdmin)
         {
-            authorDto.Links.Add(new DataHateoas(url.Link("actualizarAutor", new {id = authorDto.Id}),
+            authorDto.Links.Add(new DataHateoas(url.Link("actualizarAutor", new { id = authorDto.Id }),
                 "autor-Actualizar",
                 "PUT"));
-            authorDto.Links.Add(new DataHateoas(url.Link("BorrarAutor", new {id = authorDto.Id}),
+            authorDto.Links.Add(new DataHateoas(url.Link("BorrarAutor", new { id = authorDto.Id }),
                 "self",
                 "DELETE"));
         }

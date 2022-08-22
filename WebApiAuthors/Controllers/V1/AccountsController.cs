@@ -34,7 +34,7 @@ public class AccountsController : ControllerBase
     [HttpPost("registrar", Name = "registrarUsuario")] //api/cuentas/registrar
     public async Task<ActionResult<AuthenticationResponse>> Register(UserCredential userCredential)
     {
-        var user = new IdentityUser {UserName = userCredential.Email, Email = userCredential.Email};
+        var user = new IdentityUser { UserName = userCredential.Email, Email = userCredential.Email };
         var result = await _userManager.CreateAsync(user, userCredential.Password);
 
         if (result.Succeeded) return await BuildToken(userCredential);

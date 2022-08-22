@@ -26,7 +26,7 @@ public class MappingProfiles : Profile
         var result = new List<BookAuthor>();
         if (bookCreatedDto.AuthorIds == null) return result;
 
-        result.AddRange(bookCreatedDto.AuthorIds.Select(authorId => new BookAuthor {AuthorId = authorId}));
+        result.AddRange(bookCreatedDto.AuthorIds.Select(authorId => new BookAuthor { AuthorId = authorId }));
 
         return result;
     }
@@ -38,7 +38,7 @@ public class MappingProfiles : Profile
         if (book.BooksAuthors == null) return result;
 
         result.AddRange(book.BooksAuthors.Select(bookAuthor =>
-            new AuthorDto {Id = bookAuthor.AuthorId, Name = bookAuthor.Author.Name}));
+            new AuthorDto { Id = bookAuthor.AuthorId, Name = bookAuthor.Author.Name }));
 
         return result;
     }
@@ -49,7 +49,7 @@ public class MappingProfiles : Profile
         if (author.BooksAuthors == null) return result;
 
         result.AddRange(author.BooksAuthors.Select(bookAuthor =>
-            new BookDto {Id = bookAuthor.BookId, Title = bookAuthor.Book.Title}));
+            new BookDto { Id = bookAuthor.BookId, Title = bookAuthor.Book.Title }));
 
         return result;
     }

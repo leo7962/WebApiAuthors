@@ -68,12 +68,12 @@ public class CommentsController : ControllerBase
         comment.BookId = bookId;
         comment.UserId = userId;
 
-        _context.Add((object) comment);
+        _context.Add((object)comment);
         await _context.SaveChangesAsync();
 
         var commentDto = _mapper.Map<CommentDto>(comment);
 
-        return CreatedAtRoute("ObtenerComentario", new {id = comment.Id, bookId}, commentDto);
+        return CreatedAtRoute("ObtenerComentario", new { id = comment.Id, bookId }, commentDto);
     }
 
     [HttpPut("{id:int}", Name = "actualizarComentario")]

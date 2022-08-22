@@ -72,7 +72,7 @@ public class Startup
                     Name = "GPL-3.0"
                 }
             });
-            x.SwaggerDoc("v2", new OpenApiInfo {Title = "WebApiAutores", Version = "v2"});
+            x.SwaggerDoc("v2", new OpenApiInfo { Title = "WebApiAutores", Version = "v2" });
             x.OperationFilter<AddParameterHateoas>();
             x.OperationFilter<AddParameterXVersion>();
             x.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme

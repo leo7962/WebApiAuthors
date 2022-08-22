@@ -48,12 +48,12 @@ public class BooksController : ControllerBase
 
         AssignOrderAuthors(book);
 
-        _context.Add((object) book);
+        _context.Add((object)book);
         await _context.SaveChangesAsync();
 
         var bookDto = _mapper.Map<BookDto>(book);
 
-        return CreatedAtRoute("ObtenerLibtro", new {id = book.Id}, bookDto);
+        return CreatedAtRoute("ObtenerLibtro", new { id = book.Id }, bookDto);
     }
 
     [HttpPut("{id:int}", Name = "actualizarLibro")]
@@ -98,7 +98,7 @@ public class BooksController : ControllerBase
         var exists = await _context.Books.AnyAsync(x => x.Id == id);
         if (!exists) return NotFound();
 
-        _context.Remove(new Book {Id = id});
+        _context.Remove(new Book { Id = id });
         await _context.SaveChangesAsync();
         return NoContent();
     }

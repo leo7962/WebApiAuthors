@@ -74,11 +74,11 @@ public class AuthorsController : ControllerBase
 
         var author = _mapper.Map<Author>(authorCreatedDto);
 
-        _context.Add((object) author);
+        _context.Add((object)author);
         await _context.SaveChangesAsync();
 
         var authorDto = _mapper.Map<AuthorDto>(author);
-        return CreatedAtRoute("obtenerAutor", new {id = author.Id}, authorDto);
+        return CreatedAtRoute("obtenerAutor", new { id = author.Id }, authorDto);
     }
 
     [HttpPut("{id:int}", Name = "actualizarAutorv1")] //Api/autores/id = 1 o 2
@@ -106,7 +106,7 @@ public class AuthorsController : ControllerBase
         var exists = await _context.Authors.AnyAsync(x => x.Id == id);
         if (!exists) return NotFound();
 
-        _context.Remove(new Author {Id = id});
+        _context.Remove(new Author { Id = id });
         await _context.SaveChangesAsync();
         return NoContent();
     }
