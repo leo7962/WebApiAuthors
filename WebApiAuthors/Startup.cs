@@ -1,14 +1,14 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Reflection;
-using System.Text;
-using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
+using System.Text;
+using System.Text.Json.Serialization;
 using WebApiAuthors.Context;
 using WebApiAuthors.Filters;
 using WebApiAuthors.Helpers;
@@ -59,7 +59,8 @@ public class Startup
         {
             x.SwaggerDoc("v1", new OpenApiInfo
             {
-                Title = "WebApiAutores", Version = "v1",
+                Title = "WebApiAutores",
+                Version = "v1",
                 Description = "Este es una Web api para trabajar con autores y libros",
                 Contact = new OpenApiContact
                 {
